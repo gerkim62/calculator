@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculator</title>
+  <style type="text/css" media="all">
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-content: center;
+      align-items: center;
+      justify-content: center;
+      background: #42445A;
+      background: hsl(235, 16%, 14%);
+      background: hsl(300, 43%, 22%);
+    }
+
+    .container {
+      --green: #50E060;
+      --blue-black: #101828;
+      background: var(--blue-black);
+      color: var(--green);
+      display: flex;
+      flex-direction: column;
+      align-content: center;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: sans-serif;
+      overflow: hidden;
+      border-radius: 10.5px;
+      height: 450px;
+      width: 300px;
+      margin: auto;
+    }
+
+    .screen {
+      width: 100%;
+      color: white;
+      height: 135px;
+      text-align: right;
+      background: hsl(300, 80%, 2%);
+      
+    }
+
+    .input {
+      margin-right: 5px;
+      margin-top: 15px;
+      font-size: 27.5px;
+      height: 50%;
+      font-size: 25px;
+      transition-duration:.3s; 
+      transition-timing-function: ease-in-out;
+      transform: translateY(62px);
+      color: white;
+      /*color: hsl(0, 0%, 59%);*/
+    }
+
+    .output {
+      margin-right: 5px;
+      font-size: 30px;
+      opacity: 1;
+      transition-duration: .4s;
+    }
+
+    .btns {
+      display: grid;
+      text-align: center;
+      grid-template-columns: repeat(4, 1fr);
+      height: 315px;
+      width: 300px;
+      border-top: 0px solid #50E060;
+      /*border-top-left-radius: 4px;
+      border-top-right-radius: 4px;*/
+    }
+
+    .btns button {
+      border: none;
+      background: inherit;
+      color: white;
+      font-size: 30px;
+      transition: 550ms;
+      width: 75px;
+    }
+
+    .btns button:active {
+      color: #50E060;
+    }
+
+    .key {
+      background: var(--blue-black) !important;
+      color: var(--green) !important;
+    }
+
+    .equals {
+      background: #50E060 !important;
+    }
+
+    .equals:active {
+      opacity: .5;
+      color: white !important;
+    }
+    
+    
+    
+    
+
+    /*.radius-left {
+      border-top-left-radius: 4px;
+    }
+
+    .radius-right {
+      border-top-right-radius: 4px;
+    }*/
+    
+    
+
+    @media only screen and (max-width: 500px) {
+      .container{
+        width: 95vw;
+        height: 95vh;
+      }
+      .screen{
+        height: 30vh;
+      }
+      
+      .btns{
+        height: 70vh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="screen">
+      <div class="input"></div>
+      <div class="output">0</div>
+    </div>
+    <div class="btns">
+      <button class="key radius-left">C</button>
+      <button class="key">÷</button>
+      <button class="key">×</button>
+      <button class="key radius-right">Del</button>
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+      <button class="key">+</button>
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+      <button class="key">–</button>
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button class="key">.</button>
+      <button class="key">(</button>
+      <button>0</button>
+      <button class="key">)</button>
+      <button class="equals">=</button>
+    </div>
+  </div>
+  <script type="text/javascript" charset="utf-8">
+    const input = document.querySelector('.input');
+    const output = document.querySelector('.output');
+
+    const btns = document.querySelectorAll('button')
+
+    let inputArray = [];
+    let display = [];
+    let displayAns = []
+    let equalsClicked;
+    let tempDisplay = [];
+    let tempInputArray=[];
+
+    takeInput()
+
+    function takeInput() {
+
+      let ans;
+
+      for (let i = 0; i < btns.length; i++) {
+
+
+        const btn = btns[i];
+        btn.addEventListener('click', e => {
+
+          //console.log(inputArray.length)
+          input.style.transform="translateY(62px)";
+            input.style.color='white';
+            input.style.fontSize="25px";
+            
+            output.style.opacity='0'
+
+          let btnText = btn.innerHTML.trim();
+         // let equalsClicked = false;
+          let isNum = false;
+
+          if (btnText == '=') {
+            input.style.transform="translateY(0px)";
+            input.style.color='hsl(0, 0%, 59%)'
+            input.style.fontSize="15px";
+            
+            output.style.opacity='1'
+            
+            equalsClicked = true;
+            try {
+              const result = eval(inputArray.join(''))
+
+              if (Math.abs(result) == Infinity) {
+                output.innerHTML = `Can't divide by zero!`
+                return;
+              } else if (result == undefined) {
+                output.innerHTML = '0';
+                return;
+              } else {
+                if (result > 10000000000000000) {
+                  output.innerHTML = result.toPrecision(12);
+                  return
+                }
+                output.innerHTML = result.toPrecision(10) * 1;
+              }
+              
+              
+              
+              tempDisplay.push(...display);
+              tempInputArray.push(...inputArray)
+              
+              //alert(tempInputArray)
+              
+              let ans = result
+              display = [ans];
+              inputArray = [ans]
+            } catch (e) {
+              output.innerHTML = 'Syntax error'
+              console.log(e)
+            }
+        
+          return;
+
+          } else if (btnText == '–') {
+            equalsClicked=false;
+
+            if (inputArray.length > 20) { return; }
+
+            inputArray.push('-')
+            display.push('–')
+          }
+          else if (btnText == '×') {
+            equalsClicked=false;
+
+            if (inputArray.length > 20) { return; }
+
+            inputArray.push('*')
+            display.push('×')
+          }
+          else if (btnText == '÷') {
+            equalsClicked=false;
+
+            if (inputArray.length > 20) { return; }
+
+            inputArray.push('/')
+            display.push('÷')
+          }
+          
+          else if (btnText == '+') {
+            equalsClicked=false;
+
+            if (inputArray.length > 20) { return; }
+
+            inputArray.push('+')
+            display.push('+')
+          }
+          
+          else if (btnText == 'C') {
+            equalsClicked=false;
+            output.style.opacity='1'
+            inputArray = [];
+            display = [];
+            output.innerHTML = '0';
+          }
+          else if (btnText == 'Del') {
+            
+            //alert(tempInputArray)
+            if(equalsClicked){
+              
+              inputArray=tempInputArray;
+              display=tempDisplay;
+              //alert('yea')
+            }
+            
+            
+            equalsClicked=false;
+            
+            
+            
+            inputArray.pop();
+            display.pop();
+            if(display.length==0){
+              output.style.opacity='1'
+              output.innerHTML='0'
+            }
+          }
+          
+          else {
+
+            if (inputArray.length > 20) { return; }
+
+            isNum = true;
+            if (equalsClicked) {
+              console.log(equalsClicked)
+              display = []
+              inputArray = []
+            }
+            inputArray.push(btnText)
+            display.push(btnText)
+            equalsClicked=false;
+          }
+          
+
+          input.innerHTML = display.join('')
+          console.log(equalsClicked)
+          
+          //console.log(display[0])
+
+        })
+      }
+    }
+  </script>
+</body>
+
+</html>
